@@ -1,0 +1,5 @@
+Package: MySSRT
+Title: Stop-Signal Reaction Time Calculation
+Description: Calculation the SSRT for a Stop-Signal Task either via mean estimation of integration.
+Version: 1.0
+RoxygenNote: 7.3.1
