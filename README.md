@@ -2,7 +2,7 @@
 
 SSRTs can either be calculated:
 
-- Using a Mean estimation (M\_{RT} - M\_{SSD})
+- Using a Mean estimation (M_RT - M_SSD)
 - Utilising the RT distribution of correct Go Trials in a
   to estimate the Stop-Signal Reaction Time.
 
