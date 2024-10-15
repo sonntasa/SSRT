@@ -65,6 +65,10 @@ meanSSRT <- function(
 intSSRT <- function(
     dat,
     replace_slow = TRUE) {
+  if (mean((dat$ssd + dat$rt) / 2) < abs(mean(dat$ssd) - mean(dat$rt))) {
+    warning("Are Reaction times and SSDs both in ms?")
+  }
+
   if (replace_slow) {
     for (vp_num in unique(dat$vp_num)) {
       dat$rt[dat$vp_num == vp_num & dat$slow == TRUE] <- max(dat$rt[dat$vp_num & dat$slow == FALSE])
@@ -79,8 +83,8 @@ intSSRT <- function(
   )
 
   for (vp_num in unique(dat$vp_num)) {
-    pResp <- round(mean(dat$corr[dat$vp_num == vp_num & dat$type == "stop", ]), 1)
-    GoRTs <- dat$RT[order(dat$rt[dat$vp_num == vp_num & dat$type == "go"])]
+    pResp <- mean(dat$corr[dat$vp_num == vp_num & dat$type == "stop"])
+    GoRTs <- sort(dat$rt[dat$vp_num == vp_num & dat$type == "go"])
     nthRT <- GoRTs[as.integer(pResp * length(GoRTs))]
     dat_SSRT <-
       rbind(
@@ -88,7 +92,7 @@ intSSRT <- function(
         data.frame(
           vp_num = vp_num,
           nthRT = round(nthRT),
-          meanSSD = round(meanSSD),
+          meanSSD = round(mean(dat$ssd[dat$vp_num == vp_num])),
           pResp = round(pResp * 100, 1)
         )
       )
