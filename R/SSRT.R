@@ -7,13 +7,13 @@
 #' @import magrittr
 #' @import dplyr
 #'
-#' @param dat_tmp a dataframe containing vp number, rt, accuracy, the condition
+#' @param dat a dataframe containing vp number, rt, accuracy, the conditions
 #' and stop-signal delays
 #' @param vp_num Name of the column containing the vp identifier.
-#' @param cond Name of the column that reflects the current condition stop =
-#' c(3, 4); go = c(1, 2)
-#' @param correct_code Name of the column containing the accuracy (1 = correct)
+#' @param type the column that reflects the current trial type (stop vs. go)
+#' @param corr boolean that reflects wether the current trial is Correct
 #' @param ssd Name of the column containing the current stop signal delay
+#' @param rt Reaction times
 #' @return a dataframe containing an estimate of the SSRT, the mean reaction
 #' times on go trials and the mean stop signal delay for each VP
 #' @examples dat <- meanSSRT(dat)
@@ -47,17 +47,20 @@ meanSSRT <- function(
 #' @import magrittr
 #' @import dplyr
 #'
-#' @param dat_tmp a dataframe containing vp number, rt, accuracy, the condition
+#' @param dat a dataframe containing vp number, rt, accuracy, the conditions
 #' and stop-signal delays
 #' @param vp_num Name of the column containing the vp identifier.
-#' @param cond Name of the column that reflects the current condition stop =
-#' c(3, 4); go = c(1, 2)
-#' @param correct_code Name of the column containing the accuracy (1 = correct)
+#' @param type the column that reflects the current trial type (stop vs. go)
+#' @param corr boolean that reflects wether the current trial is Correct
 #' @param ssd Name of the column containing the current stop signal delay
-#' @return a dataframe containing an estimate of the SSRT, the mean reaction
-#' times on go trials, the mean stop signal delay and the mean p(reponse |
-#' signal) for each VP
-#' @examples dat <- meanSSRT(dat)
+#' @param rt Reaction times
+#' @param replace_slow boolean that indicates whether slow values should be
+#' raplaced with the slowest correct RT, to correct distribution (see
+#' Verbruggen et al., 2019)
+#' @return a dataframe containing the vp identifier, an estimate of the SSRT,
+#' nth reaction time, used to compute the SSRT, the mean Stop Signal delay,
+#' the p(response | signal) and the estimated SSRT.
+#' @examples dat <- intSSRT(dat)
 #' @export
 intSSRT <- function(
     dat,

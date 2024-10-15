@@ -7,17 +7,18 @@
 meanSSRT(dat, RTexc = FALSE, RTmin = 100, RTmax = 600)
 }
 \arguments{
-\item{dat_tmp}{a dataframe containing vp number, rt, accuracy, the condition
+\item{dat}{a dataframe containing vp number, rt, accuracy, the conditions
 and stop-signal delays}
 
 \item{vp_num}{Name of the column containing the vp identifier.}
 
-\item{cond}{Name of the column that reflects the current condition stop =
-c(3, 4); go = c(1, 2)}
+\item{type}{the column that reflects the current trial type (stop vs. go)}
 
-\item{correct_code}{Name of the column containing the accuracy (1 = correct)}
+\item{corr}{boolean that reflects wether the current trial is Correct}
 
 \item{ssd}{Name of the column containing the current stop signal delay}
+
+\item{rt}{Reaction times}
 }
 \value{
 a dataframe containing an estimate of the SSRT, the mean reaction
