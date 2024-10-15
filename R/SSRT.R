@@ -18,19 +18,25 @@
 #' times on go trials and the mean stop signal delay for each VP
 #' @examples dat <- meanSSRT(dat)
 #' @export
-meanSSRT <- function(dat_tmp) {
-  tmp <- dat_tmp
-  stop_trials <- tmp %>% dplyr::filter(cond %in% c(3, 4))
-  go_trials <- tmp %>% dplyr::filter(cond %in% c(1, 2), correct_code == 2)
-  go_trials <- go_trials %>%
-    group_by(vp_num) %>%
-    summarise(meanRT = round(mean(RT)))
-  stop_trials <- stop_trials %>%
-    group_by(vp_num) %>%
-    summarise(meanSSD = round(mean(ssd)))
-  tmp <- merge(go_trials, stop_trials, by = "vp_num")
-  tmp <- tmp %>% mutate(SSRT = meanRT - meanSSD)
-  return(tmp)
+meanSSRT <- function(
+    dat,
+    RTexc = FALSE,
+    RTmin = 100,
+    RTmax = 600) {
+  if (RTexc) {
+    dat <- dat %>% filter(between(rt, RTmin, RTmax))
+  }
+  return(
+    merge(
+      dat[dat$type == "go", ] %>%
+        group_by(vp_num) %>%
+        summarise(meanRT = round(mean(rt))),
+      dat[dat$type == "stop", ] %>%
+        group_by(vp_num) %>%
+        summarise(meanSSD = round(mean(ssd))),
+      by = "vp_num"
+    ) %>% mutate(SSRT = meanRT - meanSSD)
+  )
 }
 
 #' @title intSSRT
@@ -53,40 +59,37 @@ meanSSRT <- function(dat_tmp) {
 #' signal) for each VP
 #' @examples dat <- meanSSRT(dat)
 #' @export
-intSSRT <- function(dat_tmp) {
-  tmp <- dat_tmp
-  stop_trials <- tmp %>% dplyr::filter(cond %in% c(3, 4))
-  go_trials <- tmp %>% dplyr::filter(cond %in% c(1, 2), correct_code == 1)
-  # NOTE: Right now, this includes all erroneous responses, including
-  # direction errors.
-  stop_trials <- stop_trials %>%
-    group_by(vp_num) %>%
-    summarise(
-      nResp = sum(correct_code != 2),
-      nGes = n(),
-      meanSSD = mean(ssd)
-    ) %>%
-    mutate(prob = nResp / nGes)
-  tmp <- tibble(vp_num = integer(), nthRT = numeric())
-  for (vp_num in unique(go_trials$vp_num)) {
-    GoRTs <- go_trials$RT[order(go_trials$RT[go_trials$vp_num == vp_num])]
-    prob <- stop_trials$prob[stop_trials$vp_num == vp_num]
-    tmp <- rbind(
-      tmp,
-      tibble(
-        vp_num = vp_num,
-        nthRT = round(GoRTs[as.integer(prob * length(GoRTs))])
-      )
-    )
+intSSRT <- function(
+    dat,
+    replace_slow = TRUE) {
+  if (replace_slow) {
+    for (vp_num in unique(dat$vp_num)) {
+      dat$rt[dat$vp_num == vp_num & dat$slow == TRUE] <- max(dat$rt[dat$vp_num & dat$slow == FALSE])
+    }
   }
-  tmp <- merge(tmp, stop_trials %>% select(c(vp_num, meanSSD, prob)), by = "vp_num") %>% head()
-  tmp <- tmp %>% mutate(SSRT = round(nthRT - meanSSD))
-  tmp <- tmp %>%
-    mutate(
-      nthRT = round(nthRT),
-      meanSSD = round(meanSSD),
-      prob = round(prob * 100, 1),
-    ) %>%
-    select(vp_num, nthRT, meanSSD, SSRT, prob)
-  return(tmp)
+
+  dat_SSRT <- data.frame(
+    vp_num = integer(),
+    nthRT = integer(),
+    meanSSD = integer(),
+    pResp = float()
+  )
+
+  for (vp_num in unique(dat$vp_num)) {
+    pResp <- round(mean(dat$corr[dat$vp_num == vp_num & dat$type == "stop", ]), 1)
+    GoRTs <- dat$RT[order(dat$rt[dat$vp_num == vp_num & dat$type == "go"])]
+    nthRT <- GoRTs[as.integer(pResp * length(GoRTs))]
+    dat_SSRT <-
+      rbind(
+        dat_SSRT,
+        data.frame(
+          vp_num = vp_num,
+          nthRT = round(nthRT),
+          meanSSD = round(meanSSD),
+          pResp = round(pResp * 100, 1)
+        )
+      )
+  }
+  dat_SSRT <- dat_SSRT %>% mutate(SSRT = nthRT - meanSSD)
+  return(dat_SSRT)
 }
