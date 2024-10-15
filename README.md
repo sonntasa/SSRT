@@ -14,8 +14,8 @@ from the RT distribution using p(response | signal); in cases where p(response
 
 (LIT, I think Verbruggen et al. 2019)
 
-## Installation
-
 ---
+
+## Installation
 
 devtools::install_github("sonntasa/SSRT")
