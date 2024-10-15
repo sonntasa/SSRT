@@ -75,7 +75,7 @@ intSSRT <- function(
     vp_num = integer(),
     nthRT = integer(),
     meanSSD = integer(),
-    pResp = float()
+    pResp = numeric()
   )
 
   for (vp_num in unique(dat$vp_num)) {
