@@ -12,7 +12,7 @@ Since the 2nd approach uses an integrative procedure that estimates the SSRT
 from the RT distribution using p(response | signal); in cases where p(response
 | signal) == 50%, both estimates should produce identical results.
 
-(LIT, I think Verbruggen et al. 2019)
+(see Verbruggen et al. 2019)
 
 ---
 
