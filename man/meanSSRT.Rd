@@ -4,7 +4,7 @@
 \alias{meanSSRT}
 \title{meanSSRT}
 \usage{
-meanSSRT(dat_tmp)
+meanSSRT(dat, RTexc = FALSE, RTmin = 100, RTmax = 600)
 }
 \arguments{
 \item{dat_tmp}{a dataframe containing vp number, rt, accuracy, the condition
