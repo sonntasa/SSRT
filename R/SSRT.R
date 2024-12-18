@@ -71,7 +71,8 @@ intSSRT <- function(
 
   if (replace_slow) {
     for (vp_num in unique(dat$vp_num)) {
-      dat$rt[dat$vp_num == vp_num & dat$slow == TRUE] <- max(dat$rt[dat$vp_num & dat$slow == FALSE])
+      dat$rt[dat$vp_num == vp_num & dat$slow] <-
+        max(dat$rt[dat$vp_num == vp_num & !dat$slow])
     }
   }
 
